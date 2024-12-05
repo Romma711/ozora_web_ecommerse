@@ -13,3 +13,4 @@ func GetProductRoutes(r *mux.Router, db *StoreDB) {
 	r.HandleFunc("/products/{id}", db.HandleUpdateProduct).Methods(http.MethodPut)
 	r.HandleFunc("/products/{id}", db.HandleDeleteProduct).Methods(http.MethodDelete)
 }
+

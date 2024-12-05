@@ -49,7 +49,7 @@ func (DB *StoreDB) HandleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	
+
 	DB.db.Create(&product)
 }
 
@@ -62,7 +62,7 @@ func (DB *StoreDB) HandleUpdateProduct(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
 		log.Println(err)
-	}	
+	}
 
 	DB.db.Save(&product)
 }
@@ -74,4 +74,8 @@ func (DB *StoreDB) HandleDeleteProduct(w http.ResponseWriter, r *http.Request) {
 	DB.db.First(&product, params["id"])
 
 	DB.db.Delete(&product)
+}
+
+func (db *StoreDB) DB() *gorm.DB {
+	return db.db
 }

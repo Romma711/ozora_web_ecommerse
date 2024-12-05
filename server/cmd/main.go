@@ -5,10 +5,13 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"github.com/joho/godotenv"
+
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/db"
+	"github.com/Romma711/ozora_web_ecommerse/server/pkg/filters"
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/product"
+	"github.com/Romma711/ozora_web_ecommerse/server/pkg/types"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -28,8 +31,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	productController := product.NewStoreDB(db)
-	product.GetProductRoutes(r, productController)
+
+	db.AutoMigrate(&types.Product{}, &types.Category{}, &types.Type{}, &types.ArtWork{})
+
+	productDB := product.NewStoreDB(db)
+	filtersDB := filters.NewStoreDB(db)
+	product.GetProductRoutes(r, productDB)
+	filters.GetFiltersRoutes(r, filtersDB)
 
 	fmt.Println("Servidor iniciado en el puerto " + port)
 	http.ListenAndServe(os.Getenv("DB_HOST")+":"+port, r)
