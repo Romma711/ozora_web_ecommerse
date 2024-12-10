@@ -3,18 +3,14 @@ module github.com/Romma711/ozora_web_ecommerse/server
 go 1.23.2
 
 require (
-	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
-	github.com/gorilla/mux v1.8.1 // indirect
-	github.com/jackc/pgpassfile v1.0.0 // indirect
-	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
-	github.com/jackc/pgx/v5 v5.7.1 // indirect
-	github.com/jackc/puddle/v2 v2.2.2 // indirect
-	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/joho/godotenv v1.5.1 // indirect
-	golang.org/x/crypto v0.29.0 // indirect
-	golang.org/x/sync v0.9.0 // indirect
-	golang.org/x/text v0.20.0 // indirect
-	gorm.io/driver/postgres v1.5.10 // indirect
-	gorm.io/gorm v1.25.12 // indirect
+	github.com/gorilla/mux v1.8.1
+	github.com/joho/godotenv v1.5.1
 )
+
+require (
+	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
+	github.com/coder/websocket v1.8.12 // indirect
+	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
+)
+
+require github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d

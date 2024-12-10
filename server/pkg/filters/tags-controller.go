@@ -1,27 +1,38 @@
 package filters
 
 import (
+	
 	"encoding/json"
 	"log"
 	"net/http"
 
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/types"
-	"gorm.io/gorm"
+	"github.com/gorilla/mux"
 )
 
-type StoreDB struct {
-	db *gorm.DB
+type Handler struct {
+	store types.TagsStore
 }
 
-func NewStoreDB(db *gorm.DB) *StoreDB {
-	return &StoreDB{db: db}
+func NewHandler(store types.TagsStore) *Handler {
+	return &Handler{store: store}
+}
+
+
+func (h *Handler)GetFiltersRoutes(r *mux.Router) {
+	r.HandleFunc("/product/categories", h.HandleGetCategories).Methods(http.MethodGet)
+	r.HandleFunc("/product/categories", h.HandleCreateCategory).Methods(http.MethodPost)
+	r.HandleFunc("/product/types", h.HandleGetTypes).Methods(http.MethodGet)
+	r.HandleFunc("/product/types", h.HandleCreateType).Methods(http.MethodPost)
+	r.HandleFunc("/product/artworks", h.HandleGetArtWorks).Methods(http.MethodGet)
+	r.HandleFunc("/product/artworks", h.HandleCreateArtWork).Methods(http.MethodPost)
 }
 
 // Types methods //
-func (DB *StoreDB) HandleGetTypes(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGetTypes(w http.ResponseWriter, r *http.Request) {
 	var types []types.Type
 
-	DB.db.Find(&types)
+	//Funcion que devuelve todos los tipos de productos
 
 	err := json.NewEncoder(w).Encode(types)
 	if err != nil {
@@ -30,7 +41,7 @@ func (DB *StoreDB) HandleGetTypes(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (DB *StoreDB) HandleCreateType(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleCreateType(w http.ResponseWriter, r *http.Request) {
 	var type_ types.Type
 
 	err := json.NewDecoder(r.Body).Decode(&type_)
@@ -38,15 +49,15 @@ func (DB *StoreDB) HandleCreateType(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 	
-	DB.db.Create(&type_)
+	//Funcion que crea un tipo de producto
 }
 
 
 // ArtWork methods //
-func (DB *StoreDB) HandleGetArtWorks(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGetArtWorks(w http.ResponseWriter, r *http.Request) {
 	var artworks []types.ArtWork
 
-	DB.db.Find(&artworks)
+	//Funcion que devuelve todos los artworks
 
 	err := json.NewEncoder(w).Encode(artworks)
 	if err != nil {
@@ -55,7 +66,7 @@ func (DB *StoreDB) HandleGetArtWorks(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (DB *StoreDB) HandleCreateArtWork(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleCreateArtWork(w http.ResponseWriter, r *http.Request) {
 	var artwork types.ArtWork
 
 	err := json.NewDecoder(r.Body).Decode(&artwork)
@@ -63,14 +74,14 @@ func (DB *StoreDB) HandleCreateArtWork(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 	
-	DB.db.Create(&artwork)
+	//Funcion que crea un artwork
 }
 
 // Category methods //
-func (DB *StoreDB) HandleGetCategories(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGetCategories(w http.ResponseWriter, r *http.Request) {
 	var categories []types.Category
 
-	DB.db.Find(&categories)
+	//Funcion que devuelve todas las categorías
 
 	err := json.NewEncoder(w).Encode(categories)
 	if err != nil {
@@ -79,7 +90,7 @@ func (DB *StoreDB) HandleGetCategories(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (DB *StoreDB) HandleCreateCategory(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleCreateCategory(w http.ResponseWriter, r *http.Request) {
 	var category types.Category
 
 	err := json.NewDecoder(r.Body).Decode(&category)
@@ -87,5 +98,5 @@ func (DB *StoreDB) HandleCreateCategory(w http.ResponseWriter, r *http.Request) 
 		log.Println(err)
 	}
 
-	DB.db.Create(&category)
+	//Funcion que crea una categoría
 }
