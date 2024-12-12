@@ -4,16 +4,17 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/types"
 	"github.com/gorilla/mux"
 )
 
 type Handler struct {
-	store types.UserStore
+	store types.ProductStore
 }
 
-func NewHandler(store types.UserStore) *Handler {
+func NewHandler(store types.ProductStore) *Handler {
 	return &Handler{store: store}
 }
 
@@ -28,9 +29,31 @@ func (h *Handler) GetProductRoutes(r *mux.Router) {
 func (h *Handler) HandleGetProducts(w http.ResponseWriter, r *http.Request) {
 	var products []types.Product
 
-	//Funcion que devuelve todos los productos
+	products, err := h.store.GetProducts()
 
-	err := json.NewEncoder(w).Encode(products)
+	err = json.NewEncoder(w).Encode(products)
+	if err != nil {
+		log.Println(err)
+	}
+
+}
+
+func (h *Handler) HandleGetProductsFiltered(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var products []types.Product
+	var err error
+	id, _ := strconv.Atoi(params["id"])
+	filter := params["filter"]
+	if filter == "category" {
+		products, err = h.store.GetProductsByCategory(id)
+	}
+	if filter == "type" {
+		products, err = h.store.GetProductsByTypes(id)
+	}
+	if filter == "artwork" {
+		products, err = h.store.GetProductsByArtWork(id)
+	}
+	err = json.NewEncoder(w).Encode(products)
 	if err != nil {
 		log.Println(err)
 	}
@@ -39,45 +62,66 @@ func (h *Handler) HandleGetProducts(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) HandleGetProduct(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-
-	var product types.Product
-	//Funcion que devuelve un producto en especifico
-	err := json.NewEncoder(w).Encode(product)
+	id, _ := strconv.Atoi(params["id"])
+	if id == 0 {
+		return
+	}
+	product, err := h.store.GetProductByID(id)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	err = json.NewEncoder(w).Encode(product)
 	if err != nil {
 		log.Println(err)
 	}
-
 }
 
 func (h *Handler) HandleCreateProduct(w http.ResponseWriter, r *http.Request) {
-	var product types.Product
-
+	var product types.ProductPayLoad
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
 		log.Println(err)
 	}
 
-	//Funcion que crea un producto
+	err = h.store.CreateProduct(&product)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte("{\"message\":\"Product created successfully\"}"))
 }
 
 func (h *Handler) HandleUpdateProduct(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-
 	var product types.Product
-	//Funcion que actualiza un producto
-
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
 		log.Println(err)
 	}
-
+	err = h.store.UpdateProduct(&product)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte("{\"message\":\"Product updated successfully\"}"))
 }
 
 func (h *Handler) HandleDeleteProduct(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-
-	var product types.Product
-	//Funcion para borrar un producto
-
+	id, _ := strconv.Atoi(params["id"])
+	if id == 0 {
+		return
+	}
+	err := h.store.DeleteProduct(id)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte("{\"message\":\"Product deleted successfully\"}"))
 }
-

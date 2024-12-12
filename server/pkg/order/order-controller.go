@@ -1,4 +1,5 @@
 package order
+/*
 
 import (
 	"database/sql"
@@ -16,7 +17,6 @@ type StoreDB struct {
 func NewStoreDB(db *sql.DB) *StoreDB {
 	return &StoreDB{db: db}
 }
-
 func (db *StoreDB) HandleGetOrders(w http.ResponseWriter, r *http.Request) {
 	var orders []types.Order
 
@@ -60,3 +60,4 @@ func (db *StoreDB) HandleDeleteOrder(w http.ResponseWriter, r *http.Request) {
 	
 	//Funcion para borrar una orden
 }
+	*/

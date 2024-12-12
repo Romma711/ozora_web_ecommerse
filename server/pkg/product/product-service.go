@@ -3,7 +3,6 @@ package product
 import (
 	"database/sql"
 
-	"github.com/Romma711/ozora_web_ecommerse/server/pkg/product"
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/types"
 )
 
@@ -49,8 +48,62 @@ func (DB *StoreDB) GetProductByID(id int) (*types.Product, error) {
 	return product, nil
 }
 
-func (DB *StoreDB) CreateProduct(product types.Product) error {
-	_, err := DB.db.Exec("INSERT INTO products (barcode, name, description, price, image, category_id, type_id, artwork_id, sold, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",product.BarCode, product.Name, product.Description, product.Price, product.Image, product.CategoryID, product.TypeID, product.ArtWorkID, product.Sold, product.Stock)
+func (DB *StoreDB) GetProductsByCategory(categoryId int) ([]types.Product, error) {
+	rows, err := DB.db.Query("SELECT * FROM products WHERE category_id = ?", categoryId)
+	if err != nil {
+		return nil, err
+	}
+	products := make([]types.Product, 0)
+
+	for rows.Next() {
+		product := new(types.Product)
+		err = rows.Scan(&product.ID, &product.BarCode, &product.Name, &product.Description, &product.Price, &product.Image, &product.CategoryID, &product.TypeID, &product.ArtWorkID, &product.Status, &product.CreatedAt, &product.DeletedAt, &product.Sold, &product.Stock)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, *product)
+	}
+	return products, nil
+}
+
+func (DB *StoreDB) GetProductsByArtWork(artWorkId int) ([]types.Product, error) {
+	rows, err := DB.db.Query("SELECT * FROM products WHERE artwork_id = ?", artWorkId)
+	if err != nil {
+		return nil, err
+	}
+	products := make([]types.Product, 0)
+
+	for rows.Next() {
+		product := new(types.Product)
+		err = rows.Scan(&product.ID, &product.BarCode, &product.Name, &product.Description, &product.Price, &product.Image, &product.CategoryID, &product.TypeID, &product.ArtWorkID, &product.Status, &product.CreatedAt, &product.DeletedAt, &product.Sold, &product.Stock)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, *product)
+	}
+	return products, nil
+}
+
+func (DB *StoreDB) GetProductsByTypes(typesId int) ([]types.Product, error) {
+	rows, err := DB.db.Query("SELECT * FROM products WHERE type_id = ?", typesId)
+	if err != nil {
+		return nil, err
+	}
+	products := make([]types.Product, 0)
+
+	for rows.Next() {
+		product := new(types.Product)
+		err = rows.Scan(&product.ID, &product.BarCode, &product.Name, &product.Description, &product.Price, &product.Image, &product.CategoryID, &product.TypeID, &product.ArtWorkID, &product.Status, &product.CreatedAt, &product.DeletedAt, &product.Sold, &product.Stock)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, *product)
+	}
+	return products, nil
+}
+
+func (DB *StoreDB) CreateProduct(product types.ProductPayLoad) error {
+	_, err := DB.db.Exec("INSERT INTO products (barcode, name, description, price, image, category_id, type_id, artwork_id, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",product.BarCode, product.Name, product.Description, product.Price, product.Image, product.CategoryID, product.TypeID, product.ArtWorkID, product.Stock)
 	if err != nil {
 		return err
 	}

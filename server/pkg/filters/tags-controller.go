@@ -30,15 +30,16 @@ func (h *Handler)GetFiltersRoutes(r *mux.Router) {
 
 // Types methods //
 func (h *Handler) HandleGetTypes(w http.ResponseWriter, r *http.Request) {
-	var types []types.Type
+	types, err := h.store.GetTypes()
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-	//Funcion que devuelve todos los tipos de productos
-
-	err := json.NewEncoder(w).Encode(types)
+	err = json.NewEncoder(w).Encode(types)
 	if err != nil {
 		log.Println(err)
 	}
-
 }
 
 func (h *Handler) HandleCreateType(w http.ResponseWriter, r *http.Request) {
@@ -49,17 +50,27 @@ func (h *Handler) HandleCreateType(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 	
+	err = h.store.CreateType(&type_)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte("{\"message\":\"Type created successfully\"}"))
 	//Funcion que crea un tipo de producto
 }
 
 
 // ArtWork methods //
 func (h *Handler) HandleGetArtWorks(w http.ResponseWriter, r *http.Request) {
-	var artworks []types.ArtWork
+	artworks, err := h.store.GetArtWorks()
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-	//Funcion que devuelve todos los artworks
-
-	err := json.NewEncoder(w).Encode(artworks)
+	err = json.NewEncoder(w).Encode(artworks)
 	if err != nil {
 		log.Println(err)
 	}
@@ -74,16 +85,26 @@ func (h *Handler) HandleCreateArtWork(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 	
+	err = h.store.CreateArtWork(&artwork)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")	
+	w.Write([]byte("{\"message\":\"Artwork created successfully\"}"))
 	//Funcion que crea un artwork
 }
 
 // Category methods //
 func (h *Handler) HandleGetCategories(w http.ResponseWriter, r *http.Request) {
-	var categories []types.Category
+	categories, err := h.store.GetCategories()
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-	//Funcion que devuelve todas las categorías
-
-	err := json.NewEncoder(w).Encode(categories)
+	err = json.NewEncoder(w).Encode(categories)
 	if err != nil {
 		log.Println(err)
 	}
@@ -98,5 +119,12 @@ func (h *Handler) HandleCreateCategory(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	//Funcion que crea una categoría
+	err = h.store.CreateCategory(&category)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte("{\"message\":\"Category created successfully\"}"))
 }
