@@ -21,9 +21,9 @@ func NewHandler(store types.ProductStore) *Handler {
 func (h *Handler) GetProductRoutes(r *mux.Router) {
 	r.HandleFunc("/products", h.HandleGetProducts).Methods(http.MethodGet)
 	r.HandleFunc("/products/{id}", h.HandleGetProduct).Methods(http.MethodGet)
+	r.HandleFunc("/products/tag/{id}", h.HandleGetProductsFiltered).Methods(http.MethodGet)
 	r.HandleFunc("/products", h.HandleCreateProduct).Methods(http.MethodPost)
 	r.HandleFunc("/products/{id}", h.HandleUpdateProduct).Methods(http.MethodPut)
-	r.HandleFunc("/products/{id}", h.HandleDeleteProduct).Methods(http.MethodDelete)
 }
 
 func (h *Handler) HandleGetProducts(w http.ResponseWriter, r *http.Request) {
@@ -110,18 +110,3 @@ func (h *Handler) HandleUpdateProduct(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("{\"message\":\"Product updated successfully\"}"))
 }
 
-func (h *Handler) HandleDeleteProduct(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	id, _ := strconv.Atoi(params["id"])
-	if id == 0 {
-		return
-	}
-	err := h.store.DeleteProduct(id)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte("{\"message\":\"Product deleted successfully\"}"))
-}

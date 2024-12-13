@@ -41,7 +41,7 @@ func (s *Store) GetCategories() ([]types.Category, error) {
 	return categories, nil
 }
 
-func (s *Store) CreateType (type_ types.Type) error {
+func (s *Store) CreateType (type_ *types.Type) error {
 	_, err := s.db.Exec("INSERT INTO types (name) VALUES (?)", type_.Name)
 	if err != nil {
 		return err
@@ -68,7 +68,7 @@ func (s *Store) GetTypes() ([]types.Type, error) {
 	return types_, nil
 }
 
-func (s *Store) CreateArtWork (artWork types.ArtWork) error {
+func (s *Store) CreateArtWork(artWork *types.ArtWork) error {
 	_, err := s.db.Exec("INSERT INTO artworks (title) VALUES (?)", artWork.Title)
 	if err != nil {
 		return err

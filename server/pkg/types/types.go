@@ -25,9 +25,7 @@ type ProductStore interface {
 	GetProductsByTypes(typesId int) ([]Product, error)
 	GetProductsByArtWork(artWorkId int) ([]Product, error)
 	UpdateProduct(product *Product) error
-	DeleteProduct(id int) error
 	GetProducts() ([]Product, error)
-	GetProductsByStock(stock int) ([]Product, error)
 }
 
 type ProductPayLoad struct {
