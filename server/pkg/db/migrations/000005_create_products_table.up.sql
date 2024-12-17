@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS products (
+  id INTEGER AUTOINCREMENT PRIMARY KEY,
+  barcode TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  price REAL(10,2) NOT NULL,
+  image_url TEXT NOT NULL,
+  category_id INTEGER NOT NULL REFERENCES categories(id),
+  type_id INTEGER NOT NULL REFERENCES types(id),
+  artwork_id INTEGER NOT NULL REFERENCES artworks(id)
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted_at DATETIME
+  status TEXT NOT NULL DEFAULT 'active',
+  sold INTEGER NOT NULL DEFAULT 0
+  stock INTEGER NOT NULL DEFAULT 0
+);

@@ -2,6 +2,7 @@ package product
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/types"
 )
@@ -17,7 +18,7 @@ func NewStoreDB(db *sql.DB) *StoreDB {
 func (DB *StoreDB) GetProducts() ([]types.Product, error) {
 	var products []types.Product
 
-	rows, err := DB.db.Query("SELECT * FROM products")
+	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products")
 	if err != nil {
 		return nil, err
 	}
@@ -35,21 +36,26 @@ func (DB *StoreDB) GetProducts() ([]types.Product, error) {
 
 func (DB *StoreDB) GetProductByID(id int) (*types.Product, error) {
 
-	rows, err := DB.db.Query("SELECT * FROM products WHERE id = ?", id)
+	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products WHERE id = ?", id)
 	if err != nil {
 		return nil, err
 	}
 	product := new(types.Product)
 
-	product, err = scanRowsIntoProduct(rows)
-	if err != nil {
-		return nil, err
+	for rows.Next() {
+		product, err = scanRowsIntoProduct(rows)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if product.ID == 0 {
+		return nil, fmt.Errorf("Product not found")
 	}
 	return product, nil
 }
 
 func (DB *StoreDB) GetProductsByCategory(categoryId int) ([]types.Product, error) {
-	rows, err := DB.db.Query("SELECT * FROM products WHERE category_id = ?", categoryId)
+	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products WHERE category_id = ?", categoryId)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +73,7 @@ func (DB *StoreDB) GetProductsByCategory(categoryId int) ([]types.Product, error
 }
 
 func (DB *StoreDB) GetProductsByArtWork(artWorkId int) ([]types.Product, error) {
-	rows, err := DB.db.Query("SELECT * FROM products WHERE artwork_id = ?", artWorkId)
+	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products WHERE artwork_id = ?", artWorkId)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +91,7 @@ func (DB *StoreDB) GetProductsByArtWork(artWorkId int) ([]types.Product, error) 
 }
 
 func (DB *StoreDB) GetProductsByTypes(typesId int) ([]types.Product, error) {
-	rows, err := DB.db.Query("SELECT * FROM products WHERE type_id = ?", typesId)
+	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products WHERE type_id = ?", typesId)
 	if err != nil {
 		return nil, err
 	}
@@ -124,6 +130,7 @@ func scanRowsIntoProduct(rows *sql.Rows) (*types.Product, error) {
 	product := new(types.Product)
 	err := rows.Scan(
 		&product.ID,
+		&product.BarCode,
 		&product.Name,
 		&product.Description,
 		&product.Price,

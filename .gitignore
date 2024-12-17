@@ -1,1 +1,4 @@
+server/cmd/.env
+# environment variables
+
 .env

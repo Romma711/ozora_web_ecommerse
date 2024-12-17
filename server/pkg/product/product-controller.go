@@ -20,7 +20,7 @@ func NewHandler(store types.ProductStore) *Handler {
 
 func (h *Handler) GetProductRoutes(r *mux.Router) {
 	r.HandleFunc("/products", h.HandleGetProducts).Methods(http.MethodGet)
-	r.HandleFunc("/products/{id}", h.HandleGetProduct).Methods(http.MethodGet)
+	r.HandleFunc("/product/{id}", h.HandleGetProduct).Methods(http.MethodGet)
 	r.HandleFunc("/products/tag/{id}", h.HandleGetProductsFiltered).Methods(http.MethodGet)
 	r.HandleFunc("/products", h.HandleCreateProduct).Methods(http.MethodPost)
 	r.HandleFunc("/products/{id}", h.HandleUpdateProduct).Methods(http.MethodPut)
@@ -30,6 +30,9 @@ func (h *Handler) HandleGetProducts(w http.ResponseWriter, r *http.Request) {
 	var products []types.Product
 
 	products, err := h.store.GetProducts()
+	if err != nil {
+		log.Println(err)
+	}
 
 	err = json.NewEncoder(w).Encode(products)
 	if err != nil {
@@ -45,13 +48,13 @@ func (h *Handler) HandleGetProductsFiltered(w http.ResponseWriter, r *http.Reque
 	id, _ := strconv.Atoi(params["id"])
 	filter := params["filter"]
 	if filter == "category" {
-		products, err = h.store.GetProductsByCategory(id)
+		products, _ = h.store.GetProductsByCategory(id)
 	}
 	if filter == "type" {
-		products, err = h.store.GetProductsByTypes(id)
+		products, _ = h.store.GetProductsByTypes(id)
 	}
 	if filter == "artwork" {
-		products, err = h.store.GetProductsByArtWork(id)
+		products, _ = h.store.GetProductsByArtWork(id)
 	}
 	err = json.NewEncoder(w).Encode(products)
 	if err != nil {
@@ -69,6 +72,9 @@ func (h *Handler) HandleGetProduct(w http.ResponseWriter, r *http.Request) {
 	product, err := h.store.GetProductByID(id)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode("El producto que busca no existe")
 		return
 	}
 	err = json.NewEncoder(w).Encode(product)
@@ -109,4 +115,3 @@ func (h *Handler) HandleUpdateProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte("{\"message\":\"Product updated successfully\"}"))
 }
-

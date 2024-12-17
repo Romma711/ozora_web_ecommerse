@@ -31,5 +31,5 @@ func main() {
 	productHandler.GetProductRoutes(r)
 	filtersHandler.GetFiltersRoutes(r)
 	fmt.Println("Servidor iniciado en el puerto " + os.Getenv("DB_PORT"))
-	http.ListenAndServe(os.Getenv("DB_HOST")+":"+os.Getenv("DB_PORT"), r)
+	log.Fatal(http.ListenAndServe(os.Getenv("DB_HOST")+":"+os.Getenv("DB_PORT"), r))
 }

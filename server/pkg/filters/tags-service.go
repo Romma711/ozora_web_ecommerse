@@ -15,7 +15,7 @@ func NewStore(db *sql.DB) *Store {
 }
 
 func (s *Store) CreateCategory(category *types.Category) error {
-	_,err := s.db.Query(`INSERT INTO categories (name) VALUES (?)`, category.Name)
+	_, err := s.db.Query(`INSERT INTO categories (name) VALUES (?)`, category.Name)
 	if err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func (s *Store) GetCategories() ([]types.Category, error) {
 	return categories, nil
 }
 
-func (s *Store) CreateType (type_ *types.Type) error {
+func (s *Store) CreateType(type_ *types.Type) error {
 	_, err := s.db.Exec("INSERT INTO types (name) VALUES (?)", type_.Name)
 	if err != nil {
 		return err
@@ -95,16 +95,18 @@ func (s *Store) GetArtWorks() ([]types.ArtWork, error) {
 	return artWorks_, nil
 }
 
-func scanRowsIntoTags (rows *sql.Rows) ([]types.Tag, error) {
-	tags := make([]types.Tag,0)
-	tag := new (types.Tag)
-	err := rows.Scan(
-		&tag.ID,
-		&tag.Name,
-	)
-	if (err != nil){
-		return nil, err
+func scanRowsIntoTags(rows *sql.Rows) ([]types.Tag, error) {
+	tags := make([]types.Tag, 0)
+	tag := new(types.Tag)
+	for rows.Next() {
+		err := rows.Scan(
+			&tag.ID,
+			&tag.Name,
+		)
+		if err != nil {
+			return nil, err
+		}
+		tags = append(tags, *tag)
 	}
-	tags = append(tags, *tag)
 	return tags, nil
 }

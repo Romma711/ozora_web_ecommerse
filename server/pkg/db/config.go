@@ -3,12 +3,15 @@ package db
 import (
 	"database/sql"
 	"log"
-	"os"
+	_ "os"
+
 	"github.com/joho/godotenv"
+	_ "modernc.org/sqlite"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
-
+///Esto es la conexion con la base de datos de turso
+/*
 func ConnectDB() (*sql.DB, error) {
 	err := godotenv.Load()
 	if err != nil {
@@ -21,6 +24,20 @@ func ConnectDB() (*sql.DB, error) {
   	if err != nil {
     	return nil, err
   	}
-	
+	return db, nil
+}
+*/
+///Esto es la conexion con la base de datos de prueba
+
+func ConnectDB() (*sql.DB, error) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	db, err := sql.Open("sqlite", "../pkg/db/ozora_db_testing.db")
+	if err != nil {
+		return nil, err
+	}
 	return db, nil
 }
