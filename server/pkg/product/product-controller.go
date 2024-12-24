@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Romma711/ozora_web_ecommerse/server/pkg/auth"
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/types"
+	"github.com/Romma711/ozora_web_ecommerse/server/pkg/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -22,6 +24,8 @@ func (h *Handler) GetProductRoutes(r *mux.Router) {
 	r.HandleFunc("/products", h.HandleGetProducts).Methods(http.MethodGet)
 	r.HandleFunc("/product/{id}", h.HandleGetProduct).Methods(http.MethodGet)
 	r.HandleFunc("/products/tag/{id}", h.HandleGetProductsFiltered).Methods(http.MethodGet)
+
+	///ADMIN AND EMPLOYEES ROUTES
 	r.HandleFunc("/products", h.HandleCreateProduct).Methods(http.MethodPost)
 	r.HandleFunc("/products/{id}", h.HandleUpdateProduct).Methods(http.MethodPut)
 }
@@ -84,6 +88,12 @@ func (h *Handler) HandleGetProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) HandleCreateProduct(w http.ResponseWriter, r *http.Request) {
+	token := mux.Vars(r)["token"]
+	if role := auth.RoleUser(token); role != "admin" && role != "employee" {
+		utils.UnauthorizedUser(w)
+		return
+	}
+	
 	var product types.ProductPayLoad
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
@@ -101,6 +111,12 @@ func (h *Handler) HandleCreateProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) HandleUpdateProduct(w http.ResponseWriter, r *http.Request) {
+	token := mux.Vars(r)["token"]
+	if role := auth.RoleUser(token); role != "admin" && role != "employee" {
+		utils.UnauthorizedUser(w)
+		return
+	}
+
 	var product types.Product
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
