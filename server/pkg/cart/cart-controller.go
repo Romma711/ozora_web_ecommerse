@@ -9,6 +9,7 @@ import (
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/auth"
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/types"
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/utils"
+	"github.com/gorilla/mux"
 )
 
 type Handler struct {
@@ -19,14 +20,18 @@ func NewHandler(store types.CartStore) *Handler {
 	return &Handler{store: store}
 }
 
-func (h *Handler) CreateCart(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetCartRoutes(r *mux.Router) {
+	r.HandleFunc("/cart", h.HandleCreateCart).Methods(http.MethodPost)
+}
+
+func (h *Handler) HandleCreateCart(w http.ResponseWriter, r *http.Request) {
 	var cart types.CartPayload
 	err := json.NewDecoder(r.Body).Decode(&cart)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	if role := auth.RoleUser(cart.Token); role != "admin" {
+	if role := auth.RoleUser(cart.Token); role != "client" {
 		utils.UnauthorizedUser(w)
 		return
 	}
