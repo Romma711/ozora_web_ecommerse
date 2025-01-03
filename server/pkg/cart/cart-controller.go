@@ -46,15 +46,14 @@ func (h *Handler) HandleCreateCart(w http.ResponseWriter, r *http.Request) {
 		total += float64(cart.Quantity[i]) * cart.Price[i]
 	}
 
-	cartId, err := h.store.CreateCart(int64(user.ID), total, cart.Address)
+	cartId, err := h.store.CreateCart(user.ID, total, cart.Address)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
 	for i := 0; i < len(cart.Productid); i++ {
-		itemId, _ := h.store.CreateCartItem(int64(cart.Productid[i]), cart.Quantity[i], cart.Price[i])
-		err = h.store.CreateOrder(cartId, itemId)
+		err := h.store.CreateCartItem(cart.Productid[i], cart.Quantity[i], cart.Price[i], cartId)
 		if err != nil {
 			log.Println(err)
 			return

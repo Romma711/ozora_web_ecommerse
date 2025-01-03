@@ -18,6 +18,8 @@ type Product struct {
 	Sold        int     `json:"sold"`
 	Stock       int     `json:"stock"`
 }
+
+///Esta es la interfaz de las funciones de product-service
 type ProductStore interface {
 	CreateProduct(product *ProductPayLoad) error
 	GetProductByID(id int) (*Product, error)
@@ -28,6 +30,7 @@ type ProductStore interface {
 	GetProducts() ([]Product, error)
 }
 
+///Esta es la estructura para crear productos
 type ProductPayLoad struct {
 	BarCode     string  `json:"code"`
 	Name        string  `json:"name"`
@@ -74,15 +77,20 @@ type TagsStore interface {
 
 ///Ordenes
 type Order struct {
-	ID        int       `json:"id"`
-	CreatedAt string    `json:"created_at"`
-	UserID    int       `json:"user_id" `
-	Total     float64   `json:"total" `
-	Product   []Product `json:"product"`
+	IDCart    int     `json:"user_id" `
+	Quantity  string  `json:"created_at"`
+	Price     float64 `json:"total" `
+	IDProduct int     `json:"product"`
 }
 
+type OrderStore interface {
+	GetOrdersUndone() ([]Order, error)
+	GetOrderByOrderId(orderId int) ([]Order, error)
+	GetOrdersByUserId(userId int) ([]Order, error)
+}
 type CartItem struct {
 	ID        int    `json:"id"`
+	IDCart    int    `json:"id_cart" `
 	CreatedAt string `json:"created_at"`
 	ProductID int    `json:"product_id" `
 	Quantity  int    `json:"quantity" `
@@ -105,9 +113,8 @@ type CartPayload struct {
 }
 
 type CartStore interface {
-	CreateCartItem(productId int64, quantity int, price float64) (int64, error)
-	CreateCart(userId int64, total float64, address string) (int64, error)
-	CreateOrder(idCart int64, idCartItem int64) error
+	CreateCartItem(productId int, quantity int, price float64, cartId int) error
+	CreateCart(userId int, total float64, address string) (int, error)
 }
 
 type User struct {
