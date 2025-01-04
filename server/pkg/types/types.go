@@ -1,7 +1,7 @@
 package types
 
-///Tipos de datos
-//Productos
+// /Tipos de datos
+// Productos
 type Product struct {
 	ID          int     `json:"id"`
 	BarCode     string  `json:"code"`
@@ -19,7 +19,7 @@ type Product struct {
 	Stock       int     `json:"stock"`
 }
 
-///Esta es la interfaz de las funciones de product-service
+// /Esta es la interfaz de las funciones de product-service
 type ProductStore interface {
 	CreateProduct(product *ProductPayLoad) error
 	GetProductByID(id int) (*Product, error)
@@ -30,7 +30,7 @@ type ProductStore interface {
 	GetProducts() ([]Product, error)
 }
 
-///Esta es la estructura para crear productos
+// /Esta es la estructura para crear productos
 type ProductPayLoad struct {
 	BarCode     string  `json:"code"`
 	Name        string  `json:"name"`
@@ -43,20 +43,20 @@ type ProductPayLoad struct {
 	Stock       int     `json:"stock"`
 }
 
-///Tags
-//Categorias
+// /Tags
+// Categorias
 type Category struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
-//Tipos
+// Tipos
 type Type struct {
 	ID   int    `json:"id"`
 	Name string `json:"name" `
 }
 
-//Obras
+// Obras
 type ArtWork struct {
 	ID    int    `json:"id"`
 	Title string `json:"title"`
@@ -75,17 +75,24 @@ type TagsStore interface {
 	GetArtWorks() ([]ArtWork, error)
 }
 
-///Ordenes
+// /Ordenes
 type Order struct {
-	IDCart    int     `json:"user_id" `
-	Quantity  string  `json:"created_at"`
-	Price     float64 `json:"total" `
+	IDCart    int     `json:"cart_id" `
+	Quantity  int     `json:"quantity"`
+	Price     float64 `json:"price" `
 	IDProduct int     `json:"product"`
 }
 
+type OrderResponse struct {
+	IDCart   int       `json:"cart_id" `
+	Total    float64   `json:"total" `
+	Products []Product `json:"product"`
+	Quantity []int     `json:"quantity"`
+}
+
 type OrderStore interface {
-	GetOrdersUndone() ([]Order, error)
-	GetOrderByOrderId(orderId int) ([]Order, error)
+	GetOrdersUndone() ([]Cart, error)
+	GetOrderByOrderId(cartId int) ([]Order, error)
 	GetOrdersByUserId(userId int) ([]Order, error)
 }
 type CartItem struct {
