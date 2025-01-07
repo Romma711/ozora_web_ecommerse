@@ -8,5 +8,5 @@ func UnauthorizedUser(w http.ResponseWriter) {
 	w.Write([]byte("{\"message\":\"User not authorized\"}"))
 }
 func EnableCORS (w *http.ResponseWriter){
-	(*w).Header().Set("Access-Control-Allow-Origin", "http//localhost:3000")
+	(*w).Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 }
