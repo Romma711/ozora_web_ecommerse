@@ -1,0 +1,8 @@
+# .air.toml
+[build]
+cmd = "go run main.go"
+bin = "./tmp/main"
+
+[watch]
+dirs = ["."]
+extensions = [".go"]

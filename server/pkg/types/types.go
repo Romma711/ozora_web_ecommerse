@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 // /Tipos de datos
 // Productos
 type Product struct {
@@ -124,6 +126,7 @@ type CartStore interface {
 	CreateCart(userId int, total float64, address string) (int, error)
 }
 
+///USUARIOS
 type User struct {
 	ID        int    `json:"id"`
 	CreatedAt string `json:"created_at"`
@@ -162,4 +165,11 @@ type Login struct {
 type Role struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type TokenContent struct {
+	ID int `json:"id"`
+	Role string `json:"role"`
+	Name string `json:"name"`
+	Exp time.Time `json:"exp"`
 }

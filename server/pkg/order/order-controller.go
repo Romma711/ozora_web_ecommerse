@@ -20,9 +20,9 @@ func NewHandler(store types.OrderStore, product types.ProductStore) *Handler {
 }
 
 func (h *Handler) GetRoutes(mux *mux.Router) {
-	mux.HandleFunc("/api/orders", h.HandleGetOrdersUndoneRoutes).Methods("GET")
-	mux.HandleFunc("/api/orders/{id}", h.HandleGetOrderByOrderId).Methods("GET")
-	mux.HandleFunc("/api/orders/user/{id}", h.HandleGetOrdersByUserId).Methods("GET")
+	mux.HandleFunc("/admin/orders", h.HandleGetOrdersUndoneRoutes).Methods("GET")
+	mux.HandleFunc("/admin/orders/:id", h.HandleGetOrderByOrderId).Methods("GET")
+	mux.HandleFunc("/admin/orders/user/:id", h.HandleGetOrdersByUserId).Methods("GET")
 }
 
 func (h *Handler) HandleGetOrdersUndoneRoutes(w http.ResponseWriter, r *http.Request) {

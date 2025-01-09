@@ -20,12 +20,12 @@ func NewHandler(store types.TagsStore) *Handler {
 
 
 func (h *Handler)GetFiltersRoutes(r *mux.Router) {
-	r.HandleFunc("/product/categories", h.HandleGetCategories).Methods(http.MethodGet)
-	r.HandleFunc("/product/categories", h.HandleCreateCategory).Methods(http.MethodPost)
-	r.HandleFunc("/product/types", h.HandleGetTypes).Methods(http.MethodGet)
-	r.HandleFunc("/product/types", h.HandleCreateType).Methods(http.MethodPost)
-	r.HandleFunc("/product/artworks", h.HandleGetArtWorks).Methods(http.MethodGet)
-	r.HandleFunc("/product/artworks", h.HandleCreateArtWork).Methods(http.MethodPost)
+	r.HandleFunc("/admin/product/categories", h.HandleGetCategories).Methods(http.MethodGet)
+	r.HandleFunc("/admin/product/categories", h.HandleCreateCategory).Methods(http.MethodPost)
+	r.HandleFunc("/admin/product/types", h.HandleGetTypes).Methods(http.MethodGet)
+	r.HandleFunc("/admin/product/types", h.HandleCreateType).Methods(http.MethodPost)
+	r.HandleFunc("/admin/product/artworks", h.HandleGetArtWorks).Methods(http.MethodGet)
+	r.HandleFunc("/admin/product/artworks", h.HandleCreateArtWork).Methods(http.MethodPost)
 }
 
 // Types methods //
