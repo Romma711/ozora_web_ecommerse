@@ -22,8 +22,8 @@ func NewHandler(store types.ProductStore) *Handler {
 
 func (h *Handler) GetProductRoutes(r *mux.Router) {
 	r.HandleFunc("/products", h.HandleGetProducts).Methods(http.MethodGet)
-	r.HandleFunc("/product/{id}", h.HandleGetProduct).Methods(http.MethodGet)
-	r.HandleFunc("/products/tag/{id}", h.HandleGetProductsFiltered).Methods(http.MethodGet)
+	r.HandleFunc("/product/:id", h.HandleGetProduct).Methods(http.MethodGet)
+	r.HandleFunc("/products/tag/:id", h.HandleGetProductsFiltered).Methods(http.MethodGet)
 
 	///ADMIN AND EMPLOYEES ROUTES
 	r.HandleFunc("/admin/products/create", h.HandleCreateProduct).Methods(http.MethodPost)
@@ -31,8 +31,6 @@ func (h *Handler) GetProductRoutes(r *mux.Router) {
 }
 
 func (h *Handler) HandleGetProducts(w http.ResponseWriter, r *http.Request) {
-	utils.EnableCORS(&w)
-
 	var products []types.Product
 
 	products, err := h.store.GetProducts()
@@ -48,8 +46,6 @@ func (h *Handler) HandleGetProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) HandleGetProductsFiltered(w http.ResponseWriter, r *http.Request) {
-	utils.EnableCORS(&w)
-
 	params := mux.Vars(r)
 	var products []types.Product
 	var err error
@@ -72,8 +68,6 @@ func (h *Handler) HandleGetProductsFiltered(w http.ResponseWriter, r *http.Reque
 }
 
 func (h *Handler) HandleGetProduct(w http.ResponseWriter, r *http.Request) {
-	utils.EnableCORS(&w)
-
 	params := mux.Vars(r)
 	id, _ := strconv.Atoi(params["id"])
 	if id == 0 {
@@ -94,8 +88,6 @@ func (h *Handler) HandleGetProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) HandleCreateProduct(w http.ResponseWriter, r *http.Request) {
-	utils.EnableCORS(&w)
-
 	token := mux.Vars(r)["token"]
 	if role := auth.RoleUser(token); role != "admin" && role != "employee" {
 		utils.UnauthorizedUser(w)
@@ -119,8 +111,6 @@ func (h *Handler) HandleCreateProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) HandleUpdateProduct(w http.ResponseWriter, r *http.Request) {
-	utils.EnableCORS(&w)
-	
 	token := mux.Vars(r)["token"]
 	if role := auth.RoleUser(token); role != "admin" && role != "employee" {
 		utils.UnauthorizedUser(w)

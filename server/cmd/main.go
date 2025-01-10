@@ -12,6 +12,7 @@ import (
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/order"
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/product"
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/user"
+	"github.com/Romma711/ozora_web_ecommerse/server/pkg/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -24,6 +25,9 @@ func main() {
 
 	r := mux.NewRouter()
 
+	c := utils.EnableCORS()
+
+	muxCors := c.Handler(r)
 	productStore := product.NewStoreDB(db)
 	filtersStore := filters.NewStore(db)
 	userStore := user.NewStore(db)
@@ -42,5 +46,5 @@ func main() {
 	cartHandler.GetCartRoutes(r)
 	orderHandler.GetRoutes(r)
 	fmt.Println("Servidor iniciado en el puerto " + os.Getenv("DB_PORT"))
-	log.Fatal(http.ListenAndServe(os.Getenv("DB_HOST")+":"+os.Getenv("DB_PORT"), r))
+	log.Fatal(http.ListenAndServe(os.Getenv("DB_HOST")+":"+os.Getenv("DB_PORT"), muxCors))
 }
