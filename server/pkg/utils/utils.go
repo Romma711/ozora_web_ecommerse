@@ -13,7 +13,7 @@ func UnauthorizedUser(w http.ResponseWriter) {
 }
 func EnableCORS () *cors.Cors {
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
+		AllowedOrigins: []string{"http://localhost:3000"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders: []string{"Content-Type", "Authorization"},
 		AllowCredentials: true,

@@ -41,6 +41,21 @@ func (s *Store) GetCategories() ([]types.Category, error) {
 	return categories, nil
 }
 
+func (s *Store) GetCategoryById(id int) (string, error) {
+	row, err := s.db.Query("SELECT name FROM categories WHERE id = ?", id)
+	if err != nil {
+		return "", err
+	}
+	var name string
+	for row.Next() {
+		err = row.Scan(&name)
+		if err != nil {
+			return "", err
+		}
+	}
+	return name, nil
+}
+
 func (s *Store) CreateType(type_ *types.Type) error {
 	_, err := s.db.Exec("INSERT INTO types (name) VALUES (?)", type_.Name)
 	if err != nil {
@@ -68,6 +83,21 @@ func (s *Store) GetTypes() ([]types.Type, error) {
 	return types_, nil
 }
 
+func (s *Store) GetTypeById(id int) (string, error) {
+	row, err := s.db.Query("SELECT name FROM types WHERE id = ?", id)
+	if err != nil {
+		return "", err
+	}
+	var name string
+	for row.Next() {
+		err = row.Scan(&name)
+		if err != nil {
+			return "", err
+		}
+	}
+	return name, nil
+}
+
 func (s *Store) CreateArtWork(artWork *types.ArtWork) error {
 	_, err := s.db.Exec("INSERT INTO artworks (title) VALUES (?)", artWork.Title)
 	if err != nil {
@@ -93,6 +123,21 @@ func (s *Store) GetArtWorks() ([]types.ArtWork, error) {
 		artWorks_ = append(artWorks_, artWork)
 	}
 	return artWorks_, nil
+}
+
+func (s *Store) GetArtWorkById(id int) (string, error) {
+	row, err := s.db.Query("SELECT title FROM artworks WHERE id = ?", id)
+	if err != nil {
+		return "", err
+	}
+	var name string
+	for row.Next() {
+		err = row.Scan(&name)
+		if err != nil {
+			return "", err
+		}
+	}
+	return name, nil
 }
 
 func scanRowsIntoTags(rows *sql.Rows) ([]types.Tag, error) {

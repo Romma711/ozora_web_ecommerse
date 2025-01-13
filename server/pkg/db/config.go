@@ -35,7 +35,7 @@ func ConnectDB() (*sql.DB, error) {
 		log.Fatal("Error loading .env file")
 	}
 
-	db, err := sql.Open("sqlite", "../pkg/db/ozora_db_testing.db")
+	db, err := sql.Open("sqlite", "./ozora_db_testing.db")
 	if err != nil {
 		return nil, err
 	}

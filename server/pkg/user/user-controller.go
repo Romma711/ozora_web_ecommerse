@@ -24,10 +24,10 @@ func (h *Handler) GetUsersRoutes(r *mux.Router) {
 	r.HandleFunc("/register", h.HandleRegister).Methods(http.MethodPost)
 	r.HandleFunc("/login", h.HandleLogin).Methods(http.MethodPost)
 
-	r.HandleFunc("/admin/users/change/:id", h.HandleUpdateUser).Methods(http.MethodPut)
-	r.HandleFunc("/admin/users/drop/:id", h.HandleDeleteUser).Methods(http.MethodDelete)
+	r.HandleFunc("/admin/users/change/{id}", h.HandleUpdateUser).Methods(http.MethodPut)
+	r.HandleFunc("/admin/users/drop/{id}", h.HandleDeleteUser).Methods(http.MethodDelete)
 	r.HandleFunc("/admin/users", h.HandleGetUsers).Methods(http.MethodGet)
-	r.HandleFunc("/admin/user/:id", h.HandleGetUser).Methods(http.MethodGet)
+	r.HandleFunc("/admin/users/{id}", h.HandleGetUser).Methods(http.MethodGet)
 }
 
 func (h *Handler) HandleRegister(w http.ResponseWriter, r *http.Request) {

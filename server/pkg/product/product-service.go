@@ -54,16 +54,15 @@ func (DB *StoreDB) GetProductByID(id int) (*types.Product, error) {
 	return product, nil
 }
 
-func (DB *StoreDB) GetProductsByCategory(categoryId int) ([]types.Product, error) {
-	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products WHERE category_id = ?", categoryId)
+func (DB *StoreDB) GetProductsByCategory(category string) ([]types.Product, error) {
+	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products WHERE category_id = (SELECT id FROM categories WHERE name = ?)", category)
 	if err != nil {
 		return nil, err
 	}
-	products := make([]types.Product, 0)
+	products:= make([]types.Product, 0)
 
 	for rows.Next() {
-		product := new(types.Product)
-		err = rows.Scan(&product.ID, &product.BarCode, &product.Name, &product.Description, &product.Price, &product.Image, &product.CategoryID, &product.TypeID, &product.ArtWorkID, &product.Status, &product.CreatedAt, &product.DeletedAt, &product.Sold, &product.Stock)
+		product, err := scanRowsIntoProduct(rows)
 		if err != nil {
 			return nil, err
 		}
@@ -72,16 +71,16 @@ func (DB *StoreDB) GetProductsByCategory(categoryId int) ([]types.Product, error
 	return products, nil
 }
 
-func (DB *StoreDB) GetProductsByArtWork(artWorkId int) ([]types.Product, error) {
-	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products WHERE artwork_id = ?", artWorkId)
+func (DB *StoreDB) GetProductsByArtWork(artWork string) ([]types.Product, error) {
+	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products WHERE artwork_id = (SELECT id FROM artworks WHERE title = ?)", artWork)
 	if err != nil {
+		
 		return nil, err
 	}
 	products := make([]types.Product, 0)
 
 	for rows.Next() {
-		product := new(types.Product)
-		err = rows.Scan(&product.ID, &product.BarCode, &product.Name, &product.Description, &product.Price, &product.Image, &product.CategoryID, &product.TypeID, &product.ArtWorkID, &product.Status, &product.CreatedAt, &product.DeletedAt, &product.Sold, &product.Stock)
+		product, err := scanRowsIntoProduct(rows)
 		if err != nil {
 			return nil, err
 		}
@@ -90,16 +89,15 @@ func (DB *StoreDB) GetProductsByArtWork(artWorkId int) ([]types.Product, error) 
 	return products, nil
 }
 
-func (DB *StoreDB) GetProductsByTypes(typesId int) ([]types.Product, error) {
-	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products WHERE type_id = ?", typesId)
+func (DB *StoreDB) GetProductsByTypes(typeName string) ([]types.Product, error) {
+	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products WHERE type_id = (SELECT id FROM types WHERE name = ?)", typeName)
 	if err != nil {
 		return nil, err
 	}
 	products := make([]types.Product, 0)
 
 	for rows.Next() {
-		product := new(types.Product)
-		err = rows.Scan(&product.ID, &product.BarCode, &product.Name, &product.Description, &product.Price, &product.Image, &product.CategoryID, &product.TypeID, &product.ArtWorkID, &product.Status, &product.CreatedAt, &product.DeletedAt, &product.Sold, &product.Stock)
+		product, err := scanRowsIntoProduct(rows)
 		if err != nil {
 			return nil, err
 		}

@@ -25,9 +25,9 @@ type Product struct {
 type ProductStore interface {
 	CreateProduct(product *ProductPayLoad) error
 	GetProductByID(id int) (*Product, error)
-	GetProductsByCategory(categoryId int) ([]Product, error)
-	GetProductsByTypes(typesId int) ([]Product, error)
-	GetProductsByArtWork(artWorkId int) ([]Product, error)
+	GetProductsByCategory(category string) ([]Product, error)
+	GetProductsByTypes(typeName string) ([]Product, error)
+	GetProductsByArtWork(artWork string) ([]Product, error)
 	UpdateProduct(product *Product) error
 	GetProducts() ([]Product, error)
 }
@@ -42,6 +42,18 @@ type ProductPayLoad struct {
 	CategoryID  int     `json:"category"`
 	TypeID      int     `json:"type"`
 	ArtWorkID   int     `json:"artwork"`
+	Stock       int     `json:"stock"`
+}
+
+type ProductResponse struct {
+	ID          int     `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	Image       string  `json:"image"`
+	Category    string  `json:"category"`
+	Type        string  `json:"type"`
+	ArtWork     string  `json:"artwork"`
 	Stock       int     `json:"stock"`
 }
 
@@ -71,10 +83,13 @@ type Tag struct {
 type TagsStore interface {
 	CreateCategory(category *Category) error
 	GetCategories() ([]Category, error)
+	GetCategoryById(id int) (string, error)
 	CreateType(type_ *Type) error
 	GetTypes() ([]Type, error)
+	GetTypeById(id int) (string, error)
 	CreateArtWork(artWork *ArtWork) error
 	GetArtWorks() ([]ArtWork, error)
+	GetArtWorkById(id int) (string, error)
 }
 
 // /Ordenes
@@ -126,7 +141,7 @@ type CartStore interface {
 	CreateCart(userId int, total float64, address string) (int, error)
 }
 
-///USUARIOS
+// /USUARIOS
 type User struct {
 	ID        int    `json:"id"`
 	CreatedAt string `json:"created_at"`
@@ -168,8 +183,8 @@ type Role struct {
 }
 
 type TokenContent struct {
-	ID int `json:"id"`
-	Role string `json:"role"`
-	Name string `json:"name"`
-	Exp time.Time `json:"exp"`
+	ID   int       `json:"id"`
+	Role string    `json:"role"`
+	Name string    `json:"name"`
+	Exp  time.Time `json:"exp"`
 }
