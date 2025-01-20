@@ -111,18 +111,11 @@ func (s *Store) GetArtWorks() ([]types.ArtWork, error) {
 	if err != nil {
 		return nil, err
 	}
-	tags, err := scanRowsIntoTags(rows)
+	artWorks, err := scanRowsIntoArtWorks(rows)
 	if err != nil {
 		return nil, err
 	}
-	var artWorks_ []types.ArtWork
-	for i := 0; i < len(tags); i++ {
-		var artWork types.ArtWork
-		artWork.ID = tags[i].ID
-		artWork.Title = tags[i].Name
-		artWorks_ = append(artWorks_, artWork)
-	}
-	return artWorks_, nil
+	return artWorks, nil
 }
 
 func (s *Store) GetArtWorkById(id int) (string, error) {
@@ -140,6 +133,28 @@ func (s *Store) GetArtWorkById(id int) (string, error) {
 	return name, nil
 }
 
+func (s *Store) GetArtWorkRecomendation(number int) (*types.ArtWork, error) {
+	row, err := s.db.Query("SELECT * FROM artworks WHERE id = ?", number)
+	if err != nil {
+		return nil ,err
+	}
+	
+	artWork := new(types.ArtWork)
+	for row.Next() {
+		err = row.Scan(
+			&artWork.ID,
+			&artWork.Title,
+			&artWork.Description,
+			&artWork.Image,
+			&artWork.Logo,
+		)
+		if err != nil {
+			return nil, err
+		}	
+	}
+
+	return artWork, nil
+}
 func scanRowsIntoTags(rows *sql.Rows) ([]types.Tag, error) {
 	tags := make([]types.Tag, 0)
 	tag := new(types.Tag)
@@ -154,4 +169,23 @@ func scanRowsIntoTags(rows *sql.Rows) ([]types.Tag, error) {
 		tags = append(tags, *tag)
 	}
 	return tags, nil
+}
+
+func scanRowsIntoArtWorks(rows *sql.Rows) ([]types.ArtWork, error) {
+	artWorks := make([]types.ArtWork, 0)
+	artWork := new(types.ArtWork)
+	for rows.Next() {
+		err := rows.Scan(
+			&artWork.ID,
+			&artWork.Title,
+			&artWork.Description,
+			&artWork.Image,
+			&artWork.Logo,
+		)
+		if err != nil {
+			return nil, err
+		}
+		artWorks = append(artWorks, *artWork)
+	}
+	return artWorks, nil
 }

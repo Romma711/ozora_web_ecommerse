@@ -1,10 +1,10 @@
 package filters
 
 import (
-	
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/types"
 	"github.com/gorilla/mux"
@@ -20,11 +20,14 @@ func NewHandler(store types.TagsStore) *Handler {
 
 
 func (h *Handler)GetFiltersRoutes(r *mux.Router) {
-	r.HandleFunc("/admin/product/categories", h.HandleGetCategories).Methods(http.MethodGet)
+	r.HandleFunc("/recomendation/{random}", h.HandleGetRecomandation).Methods(http.MethodGet)
+	r.HandleFunc("/product/artworks", h.HandleGetArtWorks).Methods(http.MethodGet)
+	r.HandleFunc("/product/categories", h.HandleGetCategories).Methods(http.MethodGet)
+	r.HandleFunc("/product/types", h.HandleGetTypes).Methods(http.MethodGet)
+
+	//Admin routes
 	r.HandleFunc("/admin/product/categories", h.HandleCreateCategory).Methods(http.MethodPost)
-	r.HandleFunc("/admin/product/types", h.HandleGetTypes).Methods(http.MethodGet)
 	r.HandleFunc("/admin/product/types", h.HandleCreateType).Methods(http.MethodPost)
-	r.HandleFunc("/admin/product/artworks", h.HandleGetArtWorks).Methods(http.MethodGet)
 	r.HandleFunc("/admin/product/artworks", h.HandleCreateArtWork).Methods(http.MethodPost)
 }
 
@@ -75,6 +78,28 @@ func (h *Handler) HandleGetArtWorks(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
+}
+//This function return an artwork as recomendation
+func (h *Handler) HandleGetRecomandation(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	number ,_ := strconv.Atoi(vars["random"])
+	artwork, err := h.store.GetArtWorkRecomendation(number)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	if artwork.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte("{\"message\":\"No artwork found\"}"))
+		return
+	}
+	
+	err = json.NewEncoder(w).Encode(artwork)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func (h *Handler) HandleCreateArtWork(w http.ResponseWriter, r *http.Request) {

@@ -8,7 +8,7 @@ import (
 
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/auth"
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/types"
-	"github.com/Romma711/ozora_web_ecommerse/server/pkg/utils"
+	//"github.com/Romma711/ozora_web_ecommerse/server/pkg/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -44,7 +44,8 @@ func (h *Handler) HandleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Password = hashedPassword //asing the hashed password to the user object
-
+	user.Role = "client" //set the role to client
+	
 	err = h.store.CreateUser(&user) //creates the user in the DB
 	if err != nil {
 		log.Println(err)
@@ -85,11 +86,12 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 ///ADMIN FUNCTIONS
 func (h *Handler) HandleUpdateUser(w http.ResponseWriter, r *http.Request) {
-	token := mux.Vars(r)["token"]
+	/*token := mux.Vars(r)["token"]
 	if role := auth.RoleUser(token); role != "admin" {
 		utils.UnauthorizedUser(w)
 		return
 	}
+		*/
 	var user types.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {	
@@ -107,13 +109,13 @@ func (h *Handler) HandleUpdateUser(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) HandleDeleteUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-
+	/*
 	token := vars["token"]
 	if role := auth.RoleUser(token); role != "admin" {
 		utils.UnauthorizedUser(w)
 		return
 	}
-	
+	*/
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		log.Println("Error: ", err)
@@ -134,12 +136,13 @@ func (h *Handler) HandleDeleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) HandleGetUsers(w http.ResponseWriter, r *http.Request) {
+	/*
 	token := mux.Vars(r)["token"]
 	if role := auth.RoleUser(token); role != "admin" {
 		utils.UnauthorizedUser(w)
 		return
 	}
-
+	*/
 	users, err := h.store.GetUsers()
 	if err != nil {
 		log.Println(err)
@@ -158,13 +161,13 @@ func (h *Handler) HandleGetUsers(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) HandleGetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	
+	/*
 	token := vars["token"]
 	if role := auth.RoleUser(token); role != "admin" {
 		utils.UnauthorizedUser(w)
 		return
 	}
-
+	*/
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		log.Println("Error: ", err)	

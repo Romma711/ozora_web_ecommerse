@@ -26,7 +26,8 @@ func main() {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
 
-	r := mux.NewRouter()
+	router := mux.NewRouter()
+	subRouter := router.Host(host).PathPrefix("/api").Subrouter()
 	
 	productStore := product.NewStoreDB(db)
 	filtersStore := filters.NewStore(db)
@@ -37,18 +38,18 @@ func main() {
 	filtersHandler := filters.NewHandler(filtersStore)
 	productHandler := product.NewHandler(productStore, filtersStore)
 	userHandler := user.NewHandler(userStore)
-	cartHandler := cart.NewHandler(cartStore)
+	cartHandler := cart.NewHandler(cartStore, productStore)
 	orderHandler := order.NewHandler(orderStore, productStore)
 	
 	
-	productHandler.GetProductRoutes(r)
-	filtersHandler.GetFiltersRoutes(r)
-	userHandler.GetUsersRoutes(r)
-	cartHandler.GetCartRoutes(r)
-	orderHandler.GetRoutes(r)
+	productHandler.GetProductRoutes(subRouter)
+	filtersHandler.GetFiltersRoutes(subRouter)
+	userHandler.GetUsersRoutes(subRouter)
+	cartHandler.GetCartRoutes(subRouter)
+	orderHandler.GetRoutes(subRouter)
 	
 	c := utils.EnableCORS()
-	muxCors := c.Handler(r)
+	muxCors := c.Handler(subRouter)
 
 	fmt.Println("Servidor iniciado en el host " + host +":"+ port)
 	log.Fatal(http.ListenAndServe((host +":"+ port), muxCors))

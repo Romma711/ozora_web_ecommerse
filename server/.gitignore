@@ -1,3 +1,6 @@
 
 # environment variables
 
+.env
+ozora_db_testing.db
+ozora_db_testing.sqbpro

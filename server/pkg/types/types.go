@@ -72,8 +72,11 @@ type Type struct {
 
 // Obras
 type ArtWork struct {
-	ID    int    `json:"id"`
-	Title string `json:"title"`
+	ID          int    `json:"id"`
+	Title       string `json:"title"`
+	Image       string `json:"image"`
+	Logo        string `json:"logo"`
+	Description string `json:"description"`
 }
 type Tag struct {
 	ID   int    `json:"id"`
@@ -90,6 +93,7 @@ type TagsStore interface {
 	CreateArtWork(artWork *ArtWork) error
 	GetArtWorks() ([]ArtWork, error)
 	GetArtWorkById(id int) (string, error)
+	GetArtWorkRecomendation(number int) (*ArtWork, error)
 }
 
 // /Ordenes
@@ -129,11 +133,15 @@ type Cart struct {
 }
 
 type CartPayload struct {
-	Token     string    `json:"token"`
-	Address   string    `json:"address"`
-	Productid []int     `json:"product_id"`
-	Quantity  []int     `json:"quantity"`
-	Price     []float64 `json:"price"`
+	Token        string        `json:"token"`
+	Address      string        `json:"address"`
+	ProductsCart []ProductCart `json:"products"`
+}
+
+type ProductCart struct {
+	ID       int     `json:"id"`
+	Quantity int     `json:"quantity"`
+	Total    float64 `json:"total"`
 }
 
 type CartStore interface {
