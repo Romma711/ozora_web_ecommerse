@@ -27,7 +27,7 @@ func main() {
 	port := os.Getenv("PORT")
 
 	router := mux.NewRouter()
-	subRouter := router.Host(host).PathPrefix("/api").Subrouter()
+	subRouter := router.Host("localhost").PathPrefix("/api").Subrouter()
 	
 	productStore := product.NewStoreDB(db)
 	filtersStore := filters.NewStore(db)

@@ -62,6 +62,7 @@ func (s *Store) GetUserByID(id int) (*types.User, error) {
 func (s *Store) UpdateUser(user *types.User) error {
 	_, err := s.db.Exec("UPDATE user SET email = ?, password = ?, role = ?, name = ?, surname = ?, mobile = ? WHERE id = ?", user.Email, user.Password, user.Role, user.Name, user.Surname, user.Mobile, user.ID)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
