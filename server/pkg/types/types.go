@@ -87,13 +87,16 @@ type TagsStore interface {
 	CreateCategory(category *Category) error
 	GetCategories() ([]Category, error)
 	GetCategoryById(id int) (string, error)
+	UpdateCategory(category Category) error
 	CreateType(type_ *Type) error
 	GetTypes() ([]Type, error)
 	GetTypeById(id int) (string, error)
+	UpdateType(type_ Type) error
 	CreateArtWork(artWork *ArtWork) error
 	GetArtWorks() ([]ArtWork, error)
 	GetArtWorkById(id int) (string, error)
 	GetArtWorkRecomendation(number int) (*ArtWork, error)
+	UpdateArtWork(artWork ArtWork) error
 }
 
 // /Ordenes

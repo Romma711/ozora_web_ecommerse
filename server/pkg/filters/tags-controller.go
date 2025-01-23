@@ -27,11 +27,16 @@ func (h *Handler)GetFiltersRoutes(r *mux.Router) {
 
 	//Admin routes
 	r.HandleFunc("/admin/product/categories", h.HandleCreateCategory).Methods(http.MethodPost)
+	r.HandleFunc("/admin/product/categories", h.HandleUpdateCategory).Methods(http.MethodPut)
 	r.HandleFunc("/admin/product/types", h.HandleCreateType).Methods(http.MethodPost)
+	r.HandleFunc("/admin/product/types", h.HandleUpdateType).Methods(http.MethodPut)
 	r.HandleFunc("/admin/product/artworks", h.HandleCreateArtWork).Methods(http.MethodPost)
+	r.HandleFunc("/admin/product/artworks", h.HandleUpdateArtWork).Methods(http.MethodPut)
 }
 
 // Types methods //
+
+//Funcion que muestra todos los types
 func (h *Handler) HandleGetTypes(w http.ResponseWriter, r *http.Request) {
 	types, err := h.store.GetTypes()
 	if err != nil {
@@ -45,6 +50,7 @@ func (h *Handler) HandleGetTypes(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//Funcion que crea un tipo de producto
 func (h *Handler) HandleCreateType(w http.ResponseWriter, r *http.Request) {
 	var type_ types.Type
 
@@ -61,9 +67,25 @@ func (h *Handler) HandleCreateType(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte("{\"message\":\"Type created successfully\"}"))
-	//Funcion que crea un tipo de producto
 }
 
+func (h *Handler) HandleUpdateType(w http.ResponseWriter, r *http.Request){
+	var type_ types.Type
+	err :=json.NewDecoder(r.Body).Decode(&type_)
+	if err != nil{
+		log.Println(err)
+	}
+
+	err = h.store.UpdateType(type_)
+	if err != nil{
+		log.Println(err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte("{\"message\":\"Type updated successfully\"}"))
+
+}
 
 // ArtWork methods //
 func (h *Handler) HandleGetArtWorks(w http.ResponseWriter, r *http.Request) {
@@ -102,6 +124,7 @@ func (h *Handler) HandleGetRecomandation(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+//Funcion que crea un artwork
 func (h *Handler) HandleCreateArtWork(w http.ResponseWriter, r *http.Request) {
 	var artwork types.ArtWork
 
@@ -118,7 +141,24 @@ func (h *Handler) HandleCreateArtWork(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")	
 	w.Write([]byte("{\"message\":\"Artwork created successfully\"}"))
-	//Funcion que crea un artwork
+}
+
+func (h *Handler) HandleUpdateArtWork(w http.ResponseWriter, r *http.Request){
+	var artwork types.ArtWork
+	err :=json.NewDecoder(r.Body).Decode(&artwork)
+	if err != nil{
+		log.Println(err)
+	}
+
+	err = h.store.UpdateArtWork(artwork)
+	if err != nil{
+		log.Println(err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte("{\"message\":\"Artwork updated successfully\"}"))
+
 }
 
 // Category methods //
@@ -152,4 +192,21 @@ func (h *Handler) HandleCreateCategory(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte("{\"message\":\"Category created successfully\"}"))
+}
+
+func (h *Handler) HandleUpdateCategory(w http.ResponseWriter, r *http.Request){
+	var category types.Category
+	err :=json.NewDecoder(r.Body).Decode(&category)
+	if err != nil{
+		log.Println(err)
+	}
+
+	err = h.store.UpdateCategory(category)
+	if err != nil{
+		log.Println(err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte("{\"message\":\"Category updated successfully\"}"))
 }
