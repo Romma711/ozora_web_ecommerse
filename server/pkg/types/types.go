@@ -30,6 +30,8 @@ type ProductStore interface {
 	GetProductsByArtWork(artWork string) ([]Product, error)
 	UpdateProduct(product *Product) error
 	GetProducts() ([]Product, error)
+	GetProductsByDatetime()([]Product, error)
+	GetProductsBySold()([]Product, error)
 }
 
 // /Esta es la estructura para crear productos

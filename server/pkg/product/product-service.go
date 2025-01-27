@@ -59,7 +59,7 @@ func (DB *StoreDB) GetProductsByCategory(category string) ([]types.Product, erro
 	if err != nil {
 		return nil, err
 	}
-	products:= make([]types.Product, 0)
+	products := make([]types.Product, 0)
 
 	for rows.Next() {
 		product, err := scanRowsIntoProduct(rows)
@@ -74,7 +74,7 @@ func (DB *StoreDB) GetProductsByCategory(category string) ([]types.Product, erro
 func (DB *StoreDB) GetProductsByArtWork(artWork string) ([]types.Product, error) {
 	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products WHERE artwork_id = (SELECT id FROM artworks WHERE title = ?)", artWork)
 	if err != nil {
-		
+
 		return nil, err
 	}
 	products := make([]types.Product, 0)
@@ -96,6 +96,42 @@ func (DB *StoreDB) GetProductsByTypes(typeName string) ([]types.Product, error) 
 	}
 	products := make([]types.Product, 0)
 
+	for rows.Next() {
+		product, err := scanRowsIntoProduct(rows)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, *product)
+	}
+	return products, nil
+}
+
+// /Esta funcion obtiene los primeros 10 productos mas recientes
+func (DB *StoreDB) GetProductsByDatetime() ([]types.Product, error) {
+	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products ORDER BY created_at DESC LIMIT 10 ")
+	if err != nil {
+		return nil, err
+	}
+
+	products := make([]types.Product, 0)
+	for rows.Next() {
+		product, err := scanRowsIntoProduct(rows)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, *product)
+	}
+	return products, nil
+}
+
+// /Esta funcion obtiene los primeros 10 productos mas vendidos
+func (DB *StoreDB) GetProductsBySold() ([]types.Product, error) {
+	rows, err := DB.db.Query("SELECT id, barcode, name, description, price, image, category_id, type_id, artwork_id, stock FROM products ORDER BY sold DESC LIMIT 10 ")
+	if err != nil {
+		return nil, err
+	}
+
+	products := make([]types.Product, 0)
 	for rows.Next() {
 		product, err := scanRowsIntoProduct(rows)
 		if err != nil {

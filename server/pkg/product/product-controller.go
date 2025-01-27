@@ -14,7 +14,7 @@ import (
 
 type Handler struct {
 	store types.ProductStore
-	tag  types.TagsStore
+	tag   types.TagsStore
 }
 
 func NewHandler(store types.ProductStore, tag types.TagsStore) *Handler {
@@ -25,10 +25,58 @@ func (h *Handler) GetProductRoutes(r *mux.Router) {
 	r.HandleFunc("/products", h.HandleGetProducts).Methods(http.MethodGet)
 	r.HandleFunc("/products/{id}", h.HandleGetProduct).Methods(http.MethodGet)
 	r.HandleFunc("/products/tag/", h.HandleGetProductsFiltered).Methods(http.MethodGet)
+	r.HandleFunc("/products/newer/", h.HandleGetProductDatetime).Methods(http.MethodGet)
+	r.HandleFunc("/products/noted/", h.HandleGetProductSold).Methods(http.MethodGet)
 
 	///ADMIN AND EMPLOYEES ROUTES
 	r.HandleFunc("/admin/products/create", h.HandleCreateProduct).Methods(http.MethodPost)
 	r.HandleFunc("/admin/products/change/{id}", h.HandleUpdateProduct).Methods(http.MethodPut)
+}
+
+func (h *Handler) HandleGetProductDatetime(w http.ResponseWriter, r *http.Request) {
+	products, err := h.store.GetProductsByDatetime()
+	if err != nil {
+		log.Println("Error:" + err.Error())
+		return
+	}
+
+	var productsResponse []types.ProductResponse
+
+	for i := 0; i < len(products); i++ {
+		response, err := h.ReturnProduct(products[i])
+		if err != nil {
+			log.Println("Error:" + err.Error())
+			return
+		}
+		productsResponse = append(productsResponse, response)
+	}
+
+	_ = json.NewEncoder(w).Encode(&productsResponse)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (h *Handler) HandleGetProductSold(w http.ResponseWriter, r *http.Request) {
+	products, err := h.store.GetProductsBySold()
+	if err != nil {
+		log.Println("Error:" + err.Error())
+		return
+	}
+
+	var productsResponse []types.ProductResponse
+
+	for i := 0; i < len(products); i++ {
+		response, err := h.ReturnProduct(products[i])
+		if err != nil {
+			log.Println("Error:" + err.Error())
+			return
+		}
+		productsResponse = append(productsResponse, response)
+	}
+
+	_ = json.NewEncoder(w).Encode(&productsResponse)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 }
 
 func (h *Handler) HandleGetProducts(w http.ResponseWriter, r *http.Request) {
@@ -57,8 +105,8 @@ func (h *Handler) HandleGetProducts(w http.ResponseWriter, r *http.Request) {
 
 }
 
-///This function is used to return a product with the tags converted as strings
-func (h *Handler) ReturnProduct(product types.Product) (types.ProductResponse, error){
+// /This function is used to return a product with the tags converted as strings
+func (h *Handler) ReturnProduct(product types.Product) (types.ProductResponse, error) {
 	var productResponse types.ProductResponse
 	var err error
 	///Assigning the values
@@ -76,11 +124,11 @@ func (h *Handler) ReturnProduct(product types.Product) (types.ProductResponse, e
 		return productResponse, err
 	}
 	productResponse.Type, err = h.tag.GetTypeById(product.TypeID)
-	if err != nil{
+	if err != nil {
 		return productResponse, err
 	}
 	productResponse.ArtWork, err = h.tag.GetArtWorkById(product.ArtWorkID)
-	if err != nil{
+	if err != nil {
 		return productResponse, err
 	}
 
@@ -95,9 +143,9 @@ func (h *Handler) HandleGetProductsFiltered(w http.ResponseWriter, r *http.Reque
 	filter := r.URL.Query().Get("filter")
 
 	if tag == "" || filter == "" {
-        http.Error(w, "Missing query parameters", http.StatusBadRequest)
-        return
-    }
+		http.Error(w, "Missing query parameters", http.StatusBadRequest)
+		return
+	}
 	log.Println(tag, filter)
 
 	if filter == "category" {
@@ -144,7 +192,7 @@ func (h *Handler) HandleGetProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	productResponse, _ := h.ReturnProduct(*product) 
+	productResponse, _ := h.ReturnProduct(*product)
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
