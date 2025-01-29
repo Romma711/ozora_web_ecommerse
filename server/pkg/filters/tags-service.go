@@ -190,6 +190,16 @@ func (s *Store) GetArtWorkRecomendation(number int) (*types.ArtWork, error) {
 	return artWork, nil
 }
 
+func (s *Store) GetNotedArtWork() ([]types.ArtWork, error){
+	rows, err := s.db.Query("SELECT * FROM artworks WHERE noted = 1")
+	if err != nil{
+		return nil, err
+	}
+
+	artWorks, err := scanRowsIntoArtWorks(rows)
+
+	return artWorks, err
+}
 
 func (s *Store) UpdateArtWork(artWork types.ArtWork) error{
 	_, err := s.db.Query("UPDATE artworks SET title = ?, description = ?, image = ?, logo = ? WHERE id = ?", artWork.Title, artWork.Description, artWork.Image, artWork.Logo, artWork.ID)

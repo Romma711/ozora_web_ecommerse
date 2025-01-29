@@ -24,9 +24,9 @@ func NewHandler(store types.ProductStore, tag types.TagsStore) *Handler {
 func (h *Handler) GetProductRoutes(r *mux.Router) {
 	r.HandleFunc("/products", h.HandleGetProducts).Methods(http.MethodGet)
 	r.HandleFunc("/products/{id}", h.HandleGetProduct).Methods(http.MethodGet)
-	r.HandleFunc("/products/tag/", h.HandleGetProductsFiltered).Methods(http.MethodGet)
-	r.HandleFunc("/products/newer/", h.HandleGetProductDatetime).Methods(http.MethodGet)
-	r.HandleFunc("/products/noted/", h.HandleGetProductSold).Methods(http.MethodGet)
+	r.HandleFunc("/products/tag", h.HandleGetProductsFiltered).Methods(http.MethodGet)
+	r.HandleFunc("/products/newer", h.HandleGetProductDatetime).Methods(http.MethodGet)
+	r.HandleFunc("/products/noted", h.HandleGetProductSold).Methods(http.MethodGet)
 
 	///ADMIN AND EMPLOYEES ROUTES
 	r.HandleFunc("/admin/products/create", h.HandleCreateProduct).Methods(http.MethodPost)
@@ -136,26 +136,25 @@ func (h *Handler) ReturnProduct(product types.Product) (types.ProductResponse, e
 }
 
 func (h *Handler) HandleGetProductsFiltered(w http.ResponseWriter, r *http.Request) {
-
 	var products []types.Product
 	var err error
 	tag := r.URL.Query().Get("tag")
 	filter := r.URL.Query().Get("filter")
-
+	
 	if tag == "" || filter == "" {
 		http.Error(w, "Missing query parameters", http.StatusBadRequest)
 		return
 	}
 	log.Println(tag, filter)
 
-	if filter == "category" {
-		products, _ = h.store.GetProductsByCategory(tag)
+	if tag == "category" {
+		products, _ = h.store.GetProductsByCategory(filter)
 	}
-	if filter == "type" {
-		products, _ = h.store.GetProductsByTypes(tag)
+	if tag == "type" {
+		products, _ = h.store.GetProductsByTypes(filter)
 	}
-	if filter == "artwork" {
-		products, _ = h.store.GetProductsByArtWork(tag)
+	if tag == "artwork" {
+		products, _ = h.store.GetProductsByArtWork(filter)
 	}
 
 	var productsResponse []types.ProductResponse

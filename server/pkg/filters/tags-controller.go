@@ -24,6 +24,7 @@ func (h *Handler)GetFiltersRoutes(r *mux.Router) {
 	r.HandleFunc("/product/artworks", h.HandleGetArtWorks).Methods(http.MethodGet)
 	r.HandleFunc("/product/categories", h.HandleGetCategories).Methods(http.MethodGet)
 	r.HandleFunc("/product/types", h.HandleGetTypes).Methods(http.MethodGet)
+	r.HandleFunc("/noted/artworks", h.HandleGetTypes).Methods(http.MethodGet)
 
 	//Admin routes
 	r.HandleFunc("/admin/product/categories", h.HandleCreateCategory).Methods(http.MethodPost)
@@ -101,6 +102,25 @@ func (h *Handler) HandleGetArtWorks(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+func (h *Handler) HandleGetNotedArtWork(w http.ResponseWriter, r *http.Request){
+	notedArtWorks, err := h.store.GetNotedArtWork()
+	if err != nil{
+		log.Println(err)
+		w.WriteHeader(http.StatusBadGateway)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte("{\"message\":\"Internal server error\"}"))
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(notedArtWorks)
+	if err != nil{
+		log.Println(err)
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
 //This function return an artwork as recomendation
 func (h *Handler) HandleGetRecomandation(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
