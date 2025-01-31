@@ -25,8 +25,8 @@ func (h *Handler) GetProductRoutes(r *mux.Router) {
 	r.HandleFunc("/products", h.HandleGetProducts).Methods(http.MethodGet)
 	r.HandleFunc("/products/{id}", h.HandleGetProduct).Methods(http.MethodGet)
 	r.HandleFunc("/products/tag", h.HandleGetProductsFiltered).Methods(http.MethodGet)
-	r.HandleFunc("/products/newer", h.HandleGetProductDatetime).Methods(http.MethodGet)
-	r.HandleFunc("/products/noted", h.HandleGetProductSold).Methods(http.MethodGet)
+	r.HandleFunc("/products/newer/", h.HandleGetProductDatetime).Methods(http.MethodGet)
+	r.HandleFunc("/products/noted/", h.HandleGetProductSold).Methods(http.MethodGet)
 
 	///ADMIN AND EMPLOYEES ROUTES
 	r.HandleFunc("/admin/products/create", h.HandleCreateProduct).Methods(http.MethodPost)
