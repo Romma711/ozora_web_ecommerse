@@ -15,6 +15,7 @@ func GenerateToken(user types.User) string { /// this function generates the tok
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id":   user.ID,
 		"user_name": user.Name,
+		"user_surname": user.Surname,
 		"user_role": user.Role,
 		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	})
@@ -41,9 +42,11 @@ func ParseToken(token string) (*types.TokenContent, error) { /// this function p
 		return nil, jwt.ErrTokenInvalidClaims
 	}
 	content := types.TokenContent{
-		ID:   claims["user_id"].(int),
+		ID:   int(claims["user_id"].(float64)),
 		Name: claims["user_name"].(string),
+		Surname: claims["user_surname"].(string),
 		Role: claims["user_role"].(string),
+		Exp:  time.Unix(int64(claims["exp"].(float64)), 0),
 	}
 	return &content, nil
 }

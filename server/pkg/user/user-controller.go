@@ -75,6 +75,7 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write([]byte("{\"message\":\"Username or password is incorrect\"}"))
+		return
 	}
 	
 	token := auth.GenerateToken(*user) //generates the token

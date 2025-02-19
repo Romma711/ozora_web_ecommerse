@@ -147,7 +147,7 @@ type CartPayload struct {
 type ProductCart struct {
 	ID       int     `json:"id"`
 	Quantity int     `json:"quantity"`
-	Total    float64 `json:"total"`
+	Total    float64 
 }
 
 type CartStore interface {
@@ -197,8 +197,9 @@ type Role struct {
 }
 
 type TokenContent struct {
-	ID   int       `json:"id"`
-	Role string    `json:"role"`
-	Name string    `json:"name"`
-	Exp  time.Time `json:"exp"`
+	ID      int       `json:"id"`
+	Role    string    `json:"role"`
+	Name    string    `json:"name"`
+	Surname string    `json:"surname"`
+	Exp     time.Time `json:"exp"`
 }

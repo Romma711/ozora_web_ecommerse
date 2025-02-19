@@ -13,7 +13,7 @@ func NewStore(db *sql.DB) *store {
 }
 
 func (s *store) CreateCartItem(productId int, quantity int, price float64, cartId int)  error {
-	_, err := s.db.Exec(`INSERT INTO cart_shopping (product_id, quantity, price, id_cart) VALUES (?, ?, ?, ?)`, productId, quantity, price, cartId)
+	_, err := s.db.Exec(`INSERT INTO cart_shopping (id_product, quantity, price, id_cart) VALUES (?, ?, ?, ?)`, productId, quantity, price, cartId)
 	if err != nil {
 		return err
 	}
@@ -21,7 +21,7 @@ func (s *store) CreateCartItem(productId int, quantity int, price float64, cartI
 }
 
 func (s *store) CreateCart(userId int, total float64, address string) (int, error) {
-	res, err := s.db.Exec(`INSERT INTO cart (id_client, address) VALUES ($1, $2, $3, $4)`, userId, total, address)
+	res, err := s.db.Exec(`INSERT INTO cart (id_client, total, address, id_status) VALUES ($1, $2, $3, $4)`, userId, total, address, 1)
 	if err != nil {
 		return 0, err
 	}

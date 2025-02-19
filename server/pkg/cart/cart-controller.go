@@ -8,6 +8,7 @@ import (
 
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/auth"
 	"github.com/Romma711/ozora_web_ecommerse/server/pkg/types"
+
 	//"github.com/Romma711/ozora_web_ecommerse/server/pkg/utils"
 	"github.com/gorilla/mux"
 )
@@ -26,9 +27,18 @@ func (h *Handler) GetCartRoutes(r *mux.Router) {
 }
 
 func (h *Handler) HandleCreateCart(w http.ResponseWriter, r *http.Request) {
-	var cart types.CartPayload
-	err := json.NewDecoder(r.Body).Decode(&cart) //decodifica el json que viene en el body
+	cart := new (types.CartPayload)
+	var requestMap map[string]string
+	err := json.NewDecoder(r.Body).Decode(&requestMap) //decodifica el json que viene en el body
 	if err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
+	cartItems := requestMap["cartItems"]
+	err = json.Unmarshal([]byte(cartItems), &cart) //decodifica el json que viene en el body
+	if err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		log.Println(err)
 		return
 	}
@@ -37,8 +47,8 @@ func (h *Handler) HandleCreateCart(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	*/
-
-	user, err := auth.ParseToken(cart.Token) //parsea el token
+	log.Println(cart)
+	content, err := auth.ParseToken(cart.Token) //parsea el token
 	if err != nil {
 		log.Println(err)
 		return
@@ -54,7 +64,7 @@ func (h *Handler) HandleCreateCart(w http.ResponseWriter, r *http.Request) {
 		total += cart.ProductsCart[i].Total //suma el total del producto al total del carrito
 	}
 
-	cartId, err := h.store.CreateCart(user.ID, total, cart.Address) //crea el carrito
+	cartId, err := h.store.CreateCart(content.ID, total, cart.Address) //crea el carrito
 	if err != nil {
 		log.Println(err)
 		return
